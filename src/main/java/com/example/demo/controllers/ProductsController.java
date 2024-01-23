@@ -3,16 +3,18 @@ package com.example.demo.controllers;
 import com.example.demo.entities.Product;
 import com.example.demo.repositories.specification.ProductsSpecs;
 import com.example.demo.services.ProductService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 
-@Controller
+@RestController
+@RequiredArgsConstructor
 @RequestMapping("/products")
 public class ProductsController {
 
@@ -24,17 +26,15 @@ public class ProductsController {
     }
 
     @GetMapping
-    public String showProductList (Model model,
-                                   @RequestParam (value = "page", required = false) Integer page,
-                                   @RequestParam (value = "word", required = false) String word,
-                                    @RequestParam (value = "minPrice", required = false) BigDecimal minPrice,
-                                    @RequestParam (value = "maxPrice", required = false) BigDecimal maxPrice)  {
+    public String showProductList(Model model,
+                                  @RequestParam(value = "page", required = false) Integer page,
+                                  @RequestParam(value = "word", required = false) String word,
+                                  @RequestParam(value = "minPrice", required = false) BigDecimal minPrice,
+                                  @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice) {
 
         if (page == null) {
             page = 1;
         }
-
-
 
 
         Specification<Product> specification = Specification.where(null);
@@ -49,7 +49,7 @@ public class ProductsController {
         }
 
         model.addAttribute("products", productService
-                .getProductWithPagingAndFiltering (specification, PageRequest.of(page - 1, 1000))
+                .getProductWithPagingAndFiltering(specification, PageRequest.of(page - 1, 1000))
                 .getContent());
         model.addAttribute("word", word);
         model.addAttribute("minPrice", minPrice);
@@ -58,7 +58,7 @@ public class ProductsController {
     }
 
     @GetMapping("/add")
-    public String showAddProductForm (Model model) {
+    public String showAddProductForm(Model model) {
         Product product = new Product();
         model.addAttribute("product", product);
         return "product-edit";
@@ -66,30 +66,51 @@ public class ProductsController {
     }
 
     @GetMapping("/edit/{id}")
-    public String showEditProductForm (Model model, @PathVariable (value = "id") Long id) {
+    public String showEditProductForm(Model model, @PathVariable(value = "id") Long id) {
         Product product = productService.getById(id);
         model.addAttribute("product", product);
         return "product-edit";
     }
 
     @PostMapping("/edit")
-    public String addProduct (@ModelAttribute(value = "product") Product product) {
+    public String addProduct(@ModelAttribute(value = "product") Product product) {
         productService.saveOrUpdate(product);
         return "redirect:/products";
     }
 
 
     @GetMapping("/show/{id}")
-    public String showOneProduct (Model model, @PathVariable(value = "id") Long id) {
+    public String showOneProduct(Model model, @PathVariable(value = "id") Long id) {
         Product product = productService.getById(id);
         model.addAttribute("product", product);
         return "product-page";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteById (@PathVariable(value = "id") Long id){
+    public String deleteById(@PathVariable(value = "id") Long id) {
         productService.deleteById(id);
         return "redirect:/products";
+    }
+
+
+    @GetMapping("/unsecured")
+    public String unsecuredData () {
+        return "Unsecured data";
+    }
+
+    @GetMapping("/secured")
+    public String securedData () {
+        return "Secured data";
+    }
+
+    @GetMapping("/admin")
+    public String adminData () {
+        return "Admin data";
+    }
+
+    @GetMapping("/info")
+    public String userData (Principal principal) {
+        return principal.getName();
     }
 }
 
