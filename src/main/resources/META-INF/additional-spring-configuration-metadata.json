@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "spring.postgresql.console.enabled",
+      "type": "java.lang.String",
+      "description": "Description for spring.postgresql.console.enabled."
+  }
+] }

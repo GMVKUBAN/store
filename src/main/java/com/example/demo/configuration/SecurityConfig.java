@@ -3,7 +3,6 @@ package com.example.demo.configuration;
 import com.example.demo.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -13,9 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 
 
 @EnableWebSecurity
@@ -39,7 +36,9 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .cors().disable()
+                .httpBasic().and()
                 .authorizeRequests()
+                .antMatchers("/products/show/**").hasRole("USER")
                 .antMatchers("/secured").authenticated()
                 .antMatchers("/info").authenticated()
                 .antMatchers("/admin").hasRole("ADMIN")
@@ -48,8 +47,8 @@ public class SecurityConfig {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling()
-                .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED));
-                /*.and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);*/
+                /*.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))*/
+                .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

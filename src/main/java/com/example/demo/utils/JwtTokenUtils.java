@@ -22,7 +22,7 @@ public class JwtTokenUtils {
     @Value("${jwt.secret}")
     private String secret;
 
-    @Value("${jwt.lifetime}")
+    @Value("${jwt.jwtExpirationInMs}")
     private Duration jwtLifetime;
 
     public String generateToken (UserDetails userDetails) {
