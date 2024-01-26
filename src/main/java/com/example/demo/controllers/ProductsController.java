@@ -50,7 +50,7 @@ public class ProductsController {
         }
 
         model.addAttribute("products", productService
-                .getProductWithPagingAndFiltering(specification, PageRequest.of(page - 1, 1000))
+                .getProductWithPagingAndFiltering(specification, PageRequest.of(page - 1, 5))
                 .getContent());
         model.addAttribute("word", word);
         model.addAttribute("minPrice", minPrice);
@@ -112,6 +112,12 @@ public class ProductsController {
     @GetMapping("/info")
     public String userData (Principal principal) {
         return principal.getName();
+    }
+
+    @GetMapping("/index")
+    public String index() {
+
+        return "index";
     }
 }
 

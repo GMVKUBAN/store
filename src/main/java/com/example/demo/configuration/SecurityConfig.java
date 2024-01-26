@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .httpBasic().and()
                 .authorizeRequests()
                 .antMatchers("/products/show/**").hasRole("USER")
+                .antMatchers("/index").hasRole("USER")
                 .antMatchers("/secured").authenticated()
                 .antMatchers("/info").authenticated()
                 .antMatchers("/admin").hasRole("ADMIN")
@@ -48,7 +49,12 @@ public class SecurityConfig {
                 .and()
                 .exceptionHandling()
                 /*.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))*/
-                .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+                .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies());
         return http.build();
     }
 
